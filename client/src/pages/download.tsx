@@ -61,6 +61,10 @@ export default function DownloadPage() {
              </Link>
           </Button>
         </div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4972921564731894"
+     crossorigin="anonymous"></script>
+         
       </header>
 
       <main className="flex-1 relative py-12">
