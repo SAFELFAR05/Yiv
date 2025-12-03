@@ -11,17 +11,60 @@ import {
   FileJson, 
   ChevronDown, 
   ChevronUp, 
-  Check 
+  Check,
+  Info,
+  Hash,
+  Calendar,
+  Eye,
+  Heart,
+  Share2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 
 interface DownloadResultProps {
   data: DownloadResponse;
 }
 
+// Helper to format keys into readable labels
+const formatLabel = (key: string) => {
+  return key
+    .replace(/([A-Z])/g, ' $1') // camelCase to Space
+    .replace(/_/g, ' ') // snake_case to Space
+    .replace(/^\w/, c => c.toUpperCase()); // Capitalize first letter
+};
+
+// Helper to detect if value is a URL
+const isUrl = (val: string) => {
+  return typeof val === 'string' && (val.startsWith('http') || val.startsWith('www'));
+};
+
+// Component to render generic key-value pairs nicely
+const DetailItem = ({ label, value, icon: Icon }: { label: string, value: any, icon?: any }) => {
+  if (!value || (Array.isArray(value) && value.length === 0) || typeof value === 'object') return null;
+  
+  return (
+    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+      <div className="flex items-center gap-2 text-muted-foreground text-sm">
+        {Icon && <Icon className="w-3.5 h-3.5" />}
+        <span>{formatLabel(label)}</span>
+      </div>
+      <div className="font-medium text-sm text-right truncate max-w-[50%]">
+        {isUrl(value) ? (
+          <a href={value} target="_blank" rel="noreferrer" className="text-primary hover:underline flex items-center gap-1 justify-end">
+            Link <Share2 className="w-3 h-3" />
+          </a>
+        ) : (
+          <span>{String(value)}</span>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export function DownloadResult({ data }: DownloadResultProps) {
-  const { title, thumbnail, author, medias, url, duration } = data;
+  const { title, thumbnail, author, medias, url, duration, ...rest } = data;
   const [showRaw, setShowRaw] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
@@ -31,9 +74,9 @@ export function DownloadResult({ data }: DownloadResultProps) {
   if (medias && Array.isArray(medias)) {
     downloadLinks = medias.map((media, idx) => ({
       url: media.url,
-      label: `${media.quality || 'HD'} ${media.extension || 'mp4'}`,
-      size: media.formattedSize,
-      icon: media.audioAvailable === false ? Music : FileVideo, // Heuristic
+      label: `${media.quality || 'Download'} ${media.extension || ''}`,
+      size: media.formattedSize || (media.size ? `${(media.size / 1024 / 1024).toFixed(2)} MB` : ''),
+      icon: media.audioAvailable === false ? Music : FileVideo,
       type: media.extension === 'mp3' ? 'audio' : 'video'
     }));
   } else if (Array.isArray(url)) {
@@ -64,6 +107,14 @@ export function DownloadResult({ data }: DownloadResultProps) {
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
   };
+
+  // Filter out complex objects for the dynamic details view
+  const dynamicDetails = Object.entries(rest).filter(([key, value]) => {
+    // Skip internal or complex objects we've already handled or shouldn't show
+    if (['status', 'code', 'success', 'message', 'medias', 'url', 'thumbnail', 'title', 'author'].includes(key)) return false;
+    if (typeof value === 'object' && value !== null) return false; 
+    return true;
+  });
 
   return (
     <motion.div
@@ -107,13 +158,16 @@ export function DownloadResult({ data }: DownloadResultProps) {
                 {title || "Download Ready"}
               </h3>
               
-              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
                 {author && (
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
                     <User className="w-3.5 h-3.5 text-primary" />
                     <span>{author}</span>
                   </div>
                 )}
+                {/* Dynamically show a few common stats if available in root */}
+                {rest.views && <Badge variant="secondary" className="gap-1"><Eye className="w-3 h-3"/> {rest.views}</Badge>}
+                {rest.likes && <Badge variant="secondary" className="gap-1"><Heart className="w-3 h-3"/> {rest.likes}</Badge>}
               </div>
             </div>
 
@@ -146,7 +200,6 @@ export function DownloadResult({ data }: DownloadResultProps) {
                         </a>
                       </Button>
                       
-                      {/* Copy Link Button */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -163,13 +216,28 @@ export function DownloadResult({ data }: DownloadResultProps) {
                   ))
                 ) : (
                    <div className="text-yellow-500 text-sm bg-yellow-500/10 p-3 rounded border border-yellow-500/20">
-                     No direct download links found in response.
+                     No direct download links found. Check the "Details" below.
                    </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Dynamic Info Section - Renders any extra data from API */}
+        {dynamicDetails.length > 0 && (
+          <div className="border-t border-white/5 bg-black/20 p-6">
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2 mb-4">
+              <Info className="w-3.5 h-3.5" />
+              Video Details
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {dynamicDetails.map(([key, value]) => (
+                 <DetailItem key={key} label={key} value={value} icon={Hash} />
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Raw JSON Viewer */}
