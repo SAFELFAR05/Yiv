@@ -6,6 +6,7 @@ import {
   Download, 
   FileVideo, 
   Music, 
+  Image as ImageIcon,
   Clock, 
   User, 
   FileJson, 
@@ -14,7 +15,6 @@ import {
   Check,
   Info,
   Hash,
-  Calendar,
   Eye,
   Heart,
   Share2
@@ -39,6 +39,39 @@ const formatLabel = (key: string) => {
 const isUrl = (val: string) => {
   return typeof val === 'string' && (val.startsWith('http') || val.startsWith('www'));
 };
+
+// Helper to detect media type from extension or URL
+const getMediaType = (url: string, ext?: string) => {
+  const extension = ext?.toLowerCase() || url.split('.').pop()?.split('?')[0]?.toLowerCase() || '';
+  
+  if (['mp3', 'm4a', 'wav', 'aac', 'ogg'].includes(extension)) return 'audio';
+  if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic'].includes(extension)) return 'image';
+  if (['mp4', 'webm', 'mkv', 'mov', 'avi', 'flv'].includes(extension)) return 'video';
+  
+  return 'video'; // Default to video if unknown
+};
+
+const getFileIcon = (type: string) => {
+  switch (type) {
+    case 'audio': return Music;
+    case 'image': return ImageIcon;
+    case 'video': return FileVideo;
+    default: return FileVideo;
+  }
+};
+
+const getLabel = (type: string, quality?: string, ext?: string) => {
+    const extLabel = ext ? `.${ext}` : '';
+    const qualLabel = quality ? `${quality}` : '';
+    
+    switch(type) {
+        case 'audio': return `Download Audio ${qualLabel} ${extLabel}`;
+        case 'image': return `Download Image ${qualLabel} ${extLabel}`;
+        case 'video': return `Download Video ${qualLabel} ${extLabel}`;
+        default: return `Download File ${extLabel}`;
+    }
+}
+
 
 // Component to render generic key-value pairs nicely
 const DetailItem = ({ label, value, icon: Icon }: { label: string, value: any, icon?: any }) => {
@@ -69,29 +102,40 @@ export function DownloadResult({ data }: DownloadResultProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   // Normalize medias to a common structure
-  let downloadLinks: Array<{ url: string; label: string; icon: any; type: 'video' | 'audio'; size?: string }> = [];
+  let downloadLinks: Array<{ url: string; label: string; icon: any; type: string; size?: string }> = [];
 
   if (medias && Array.isArray(medias)) {
-    downloadLinks = medias.map((media, idx) => ({
-      url: media.url,
-      label: `${media.quality || 'Download'} ${media.extension || ''}`,
-      size: media.formattedSize || (media.size ? `${(media.size / 1024 / 1024).toFixed(2)} MB` : ''),
-      icon: media.audioAvailable === false ? Music : FileVideo,
-      type: media.extension === 'mp3' ? 'audio' : 'video'
-    }));
+    downloadLinks = medias.map((media) => {
+      const type = media.extension === 'mp3' || media.audioAvailable === false ? 'audio' : getMediaType(media.url, media.extension);
+      const icon = getFileIcon(type);
+      // Use provided extension or try to guess from URL if not provided
+      const ext = media.extension || media.url.split('.').pop()?.split('?')[0] || '';
+      
+      return {
+        url: media.url,
+        label: media.quality || getLabel(type, undefined, ext),
+        size: media.formattedSize || (media.size ? `${(media.size / 1024 / 1024).toFixed(2)} MB` : ''),
+        icon: icon,
+        type: type
+      };
+    });
   } else if (Array.isArray(url)) {
-      downloadLinks = url.map((item, idx) => ({
-          url: item.url,
-          label: `Download ${item.ext || 'File'} ${item.quality || ''}`,
-          icon: FileVideo,
-          type: 'video'
-      }));
+      downloadLinks = url.map((item) => {
+          const type = getMediaType(item.url, item.ext);
+          return {
+            url: item.url,
+            label: item.quality ? `${item.quality} ${item.ext || ''}` : getLabel(type, undefined, item.ext),
+            icon: getFileIcon(type),
+            type: type
+          }
+      });
   } else if (typeof url === 'string') {
+      const type = getMediaType(url);
       downloadLinks.push({
           url: url,
-          label: 'Download Video',
-          icon: FileVideo,
-          type: 'video'
+          label: getLabel(type),
+          icon: getFileIcon(type),
+          type: type
       });
   }
 
@@ -192,7 +236,7 @@ export function DownloadResult({ data }: DownloadResultProps) {
                               <link.icon className="w-4 h-4" />
                             </div>
                             <div className="flex flex-col items-start gap-0.5 truncate">
-                              <span className="font-medium truncate">{link.label}</span>
+                              <span className="font-medium truncate uppercase">{link.type} • {link.label}</span>
                               {link.size && <span className="text-[10px] opacity-60">{link.size}</span>}
                             </div>
                           </div>

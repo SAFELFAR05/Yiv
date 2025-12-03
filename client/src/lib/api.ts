@@ -28,6 +28,7 @@ export interface DownloadResponse {
   hd?: string;
   sd?: string;
   audio?: string;
+  [key: string]: any; // Allow dynamic properties
 }
 
 export async function fetchDownload(videoUrl: string): Promise<DownloadResponse> {
