@@ -117,6 +117,11 @@ export default function Home() {
               </p>
             </motion.div>
 
+             {/* AD SPACE - MIDDLE (Above input) */}
+             <div className="w-full max-w-3xl mx-auto h-20 bg-white/5 border border-white/5 border-dashed rounded-lg flex items-center justify-center mb-8 text-muted-foreground text-sm">
+                ADVERTISEMENT SPACE (HOME TOP)
+             </div>
+
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -135,6 +140,11 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Supported Platforms</h2>
               <p className="text-muted-foreground">We support downloading from 50+ major social media platforms.</p>
             </div>
+
+             {/* AD SPACE - ABOVE GRID */}
+             <div className="w-full max-w-4xl mx-auto h-24 bg-white/5 border border-white/5 border-dashed rounded-lg flex items-center justify-center mb-12 text-muted-foreground text-sm">
+                ADVERTISEMENT SPACE (HOME MIDDLE)
+             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {supportedPlatforms.map((platform, i) => (
@@ -207,6 +217,13 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* AD SPACE - BOTTOM */}
+        <div className="container mx-auto px-4 pb-20">
+            <div className="w-full max-w-4xl mx-auto h-24 bg-white/5 border border-white/5 border-dashed rounded-lg flex items-center justify-center text-muted-foreground text-sm">
+            ADVERTISEMENT SPACE (HOME BOTTOM)
+            </div>
+        </div>
       </main>
 
       <footer className="py-12 border-t border-white/5 text-center text-muted-foreground text-sm bg-black/30">
