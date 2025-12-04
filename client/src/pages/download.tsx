@@ -45,6 +45,8 @@ export default function DownloadPage() {
     <div className="min-h-screen flex flex-col bg-background">
        {/* Navbar */}
        <header className="border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-50">
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4972921564731894"
+     crossorigin="anonymous"></script>
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
