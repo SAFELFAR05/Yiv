@@ -121,20 +121,7 @@ export default function Home() {
              <div className="w-full max-w-3xl mx-auto h-20 bg-white/5 border border-white/5 border-dashed rounded-lg flex items-center justify-center mb-8 text-muted-foreground text-sm">
                 ADVERTISEMENT SPACE (HOME TOP)
              </div>
-            <script
-              type="text/javascript"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  atOptions = {
-                    'key' : 'e4be5359d86644e160f792f8e3345d55',
-                    'format' : 'iframe',
-                    'height' : 300,
-                    'width' : 160,
-                    'params' : {}
-                  };
-                `,
-              }}
-            />
+            
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
