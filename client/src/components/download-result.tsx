@@ -17,11 +17,13 @@ import {
   Hash,
   Eye,
   Heart,
-  Share2
+  Share2,
+  Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import { forceDownloadBlob } from "@/lib/utils";
 
 interface DownloadResultProps {
   data: DownloadResponse;
@@ -100,6 +102,7 @@ export function DownloadResult({ data }: DownloadResultProps) {
   const { title, thumbnail, author, medias, url, duration, ...rest } = data;
   const [showRaw, setShowRaw] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
 
   // Normalize medias to a common structure
   let downloadLinks: Array<{ url: string; label: string; icon: any; type: string; size?: string }> = [];
@@ -159,6 +162,13 @@ export function DownloadResult({ data }: DownloadResultProps) {
     if (typeof value === 'object' && value !== null) return false; 
     return true;
   });
+
+  const handleDownload = async (link: { url: string, type: string, label: string }, index: number) => {
+    setDownloadingIndex(index);
+    const filename = `${title || 'download'}_${link.label}.${link.type === 'audio' ? 'mp3' : 'mp4'}`.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+    await forceDownloadBlob(link.url, filename);
+    setDownloadingIndex(null);
+  };
 
   return (
     <motion.div
@@ -228,20 +238,27 @@ export function DownloadResult({ data }: DownloadResultProps) {
                       <Button
                         variant="outline"
                         className="flex-1 justify-between group border-white/10 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all h-12"
-                        asChild
+                        disabled={downloadingIndex === idx}
+                        onClick={() => handleDownload(link, idx)}
                       >
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" download>
-                          <div className="flex items-center gap-3 overflow-hidden">
-                            <div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                            {downloadingIndex === idx ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
                               <link.icon className="w-4 h-4" />
-                            </div>
-                            <div className="flex flex-col items-start gap-0.5 truncate">
-                              <span className="font-medium truncate uppercase">{link.type} • {link.label}</span>
-                              {link.size && <span className="text-[10px] opacity-60">{link.size}</span>}
-                            </div>
+                            )}
                           </div>
+                          <div className="flex flex-col items-start gap-0.5 truncate">
+                            <span className="font-medium truncate uppercase">{link.type} • {link.label}</span>
+                            {link.size && <span className="text-[10px] opacity-60">{link.size}</span>}
+                          </div>
+                        </div>
+                        {downloadingIndex === idx ? (
+                          <Loader2 className="w-4 h-4 animate-spin opacity-50" />
+                        ) : (
                           <Download className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                        </a>
+                        )}
                       </Button>
                       
                       <Button
