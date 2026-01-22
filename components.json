@@ -17,5 +17,15 @@
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
-  }
+  },
+  "news": [
+    {
+      "id": "ee44a84f-57f8-42d0-bb83-0d481139b113",
+      "title": "P",
+      "content": "Saya tidak tahu apakah itu adalah hal yg sama seperti anda dan ",
+      "date": "2026-01-22T02:05:24.038Z",
+      "image": "",
+      "category": "News"
+    }
+  ]
 }
