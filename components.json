@@ -28,6 +28,16 @@
       "category": "News",
       "author": "Elfar",
       "htmlUrl": "pages/news/tawangmangu.html"
+    },
+    {
+      "id": "fc74a5be-4bd0-4684-ae74-5259d5fc24df",
+      "title": "Uj",
+      "content": "Aku ",
+      "date": "2026-01-22T05:00:13.508Z",
+      "image": "https://raw.githubusercontent.com/SAFELFAR05/Yiv/main/assets/1769058032240-IMG_5990.jpeg",
+      "category": "News",
+      "author": "Nan",
+      "htmlUrl": "pages/news/uj.html"
     }
   ],
   "tips": []
