@@ -18,6 +18,17 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "news": [],
+  "news": [
+    {
+      "id": "95566fd1-e5ff-4fe9-a871-7c08975a21e9",
+      "title": "TAWANGMANGU ",
+      "content": "Tawangmangu adalah kecamatan di Kabupaten Karanganyar, Jawa Tengah, yang terkenal sebagai destinasi wisata pegunungan favorit dengan udara sejuk karena berada di lereng Gunung Lawu, menawarkan pemandangan alam hijau, air terjun seperti Grojogan Sewu, serta beragam atraksi mulai dari agrowisata, taman bermain modern seperti Taman Wisata Balekambang dengan landmark dunia, hingga wisata edukasi herbal di Hortus Medicus, menjadikannya pilihan ideal untuk liburan keluarga yang lengkap dan menyenangkan. \nLokasi & Akses\nTerletak di Kabupaten Karanganyar, Jawa Tengah, sekitar 37 km dari Solo.\nAksesnya mudah melalui jalur darat dengan kendaraan pribadi atau umum, dengan perjalanan sekitar 1-1.5 jam dari Solo. \n",
+      "date": "2026-01-22T04:52:16.166Z",
+      "image": "https://raw.githubusercontent.com/SAFELFAR05/Yiv/main/assets/1769057562201-IMG_5942.jpeg",
+      "category": "News",
+      "author": "Elfar",
+      "htmlUrl": "pages/news/tawangmangu.html"
+    }
+  ],
   "tips": []
 }
